@@ -3,7 +3,7 @@ class Api::ShortenerUrlController < Api::ApiController
     encode_params = encode_url_params
     key_available = KeyAvailable.first
     if key_available
-      short_url = ShortenerUrl.new(original_url: encode_params[:original_url], key_code: key_available.key_code)
+      short_url = ShortenerUrl.new(original_url: encode_params[:original_url], key_code: key_available.key_code, expired_at: DateTime.current)
       if short_url.save
         KeyUsed.create(key_code: key_available.key_code)
         key_available.destroy

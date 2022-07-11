@@ -38,7 +38,8 @@ class ShortenerUrlService
     key_availales = []
     (from_time.to_i..to_time.to_i).to_a.each do |second|
       key_availales << {
-        key_code: ShortenerUrlService.convert_number_to_short_url(second)
+        key_code: ShortenerUrlService.convert_number_to_short_url(second),
+        number_to_convert: second
       }
     end
     result = key_availales.present? ? KeyAvailable.insert_all(key_availales, returning: %w[id key_code]) : []
