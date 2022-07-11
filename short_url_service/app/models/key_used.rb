@@ -1,0 +1,2 @@
+class KeyUsed < ApplicationRecord
+end

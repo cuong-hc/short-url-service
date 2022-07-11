@@ -1,0 +1,8 @@
+export SHORT_URL_DATABASE_USER=suagr
+export SHORT_URL_DATABASE_PASSWORD=
+export SHORT_URL_DATABASE_HOST=localhost
+export SHORT_URL_DATABASE=short_url
+export REDIS_DB=1
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
+

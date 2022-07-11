@@ -1,0 +1,85 @@
+version: "3.8"
+services:
+  short-url-be:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - SHORT_URL_DATABASE_USER=${SHORT_URL_DATABASE_USER}
+      - SHORT_URL_DATABASE_PASSWORD=${SHORT_URL_DATABASE_PASSWORD}
+      - SHORT_URL_DATABASE_HOST=${SHORT_URL_DATABASE_HOST}
+      - SHORT_URL_DATABASE=${SHORT_URL_DATABASE}
+      - REDIS_DB=${REDIS_DB}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}
+      - RAILS_ENV=development
+    volumes:
+      - ./:/workspace
+    networks:
+      - short-url-net-be
+    restart: on-failure
+    depends_on:
+      - database
+      - redis
+
+  # sidekiq:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   command: "bundle exec sidekiq -e development -C config/sidekiq.yml"
+  #   environment:
+  #     - SHORT_URL_DATABASE_USER=${SHORT_URL_DATABASE_USER}
+  #     - SHORT_URL_DATABASE_PASSWORD=${SHORT_URL_DATABASE_PASSWORD}
+  #     - SHORT_URL_DATABASE_HOST=${SHORT_URL_DATABASE_HOST}
+  #     - SHORT_URL_DATABASE=${SHORT_URL_DATABASE}
+  #     - REDIS_DB=${REDIS_DB}
+  #     - REDIS_HOST=${REDIS_HOST}
+  #     - REDIS_PORT=${REDIS_PORT}
+  #     - REDIS_URL=redis://${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}
+  #     - RAILS_ENV=development
+  #   volumes:
+  #     - ./:/workspace
+  #   networks:
+  #     - short-url-net-be
+  #   restart: on-failure
+  #   depends_on:
+  #     - database
+  #     - redis
+
+  database:
+    image: postgis/postgis:14-3.2-alpine
+    restart: on-failure
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${SHORT_URL_DATABASE}
+      - POSTGRES_USER=${SHORT_URL_DATABASE_USER}
+      - POSTGRES_PASSWORD=${SHORT_URL_DATABASE_PASSWORD}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - short-url-net-be
+
+  redis:
+    image: "redis:6-alpine"
+    restart: on-failure
+    ports:
+      - 6379:6379
+    command: redis-server
+    networks:
+      - short-url-net-be
+    volumes:
+      - redis:/var/lib/redis
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+networks:
+  short-url-net-be:
+
+volumes:
+  postgres:
+  redis:
+  redis-data:
