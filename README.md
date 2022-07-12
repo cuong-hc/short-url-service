@@ -6,6 +6,14 @@ Github: https://github.com/cuong-hc/short-url-service
 
 Short-URL API is hosted on: https://fathomless-brook-34457.herokuapp.com
 
+  1.  POST api/encode: Encode the original url
+      - Request: curl -d '{"original_url": "https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/encode
+      - Response: {"short_url":"http://short.est/bYk4ga"}
+
+  2. POST api/decode: Decode the code to original url
+      - Request curl -d '{"key_code": "bYk4ga"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/decode  
+      - Response: {"original_url":"https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}
+
 To resolve this challenge, in my opinion, we need to resolve the below problems:
   1. Generate the unique key_code to map with a long URL
   2. How to get the key_code to map with a long URL fast and avoid duplications or collisions
@@ -27,19 +35,7 @@ Database: PostgreSQL
   - `key_code` 
   - `number_to_convert`: Unix Timestamp
 
-My Assigments:
-  1. My project is hosted on Heroku: https://fathomless-brook-34457.herokuapp.com
-  2. Github
-
-  1. POST api/encode: Encode the original url
-  -  curl -d '{"original_url": "https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/encode
-  - Response: {"short_url":"http://short.est/bYk4ga"}
-
-  2. POST api/decode: Decode the code to original url
-  - curl -d '{"key_code": "bYk4ga"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/decode  
-  - Response: {"original_url":"https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}
-
-To Do: 
+Improvement: 
   1. Need to have a strategy to fill the new key_code in table "keys_available" when it 's empty. Such as: Cronjob to generate a new_key with a new time range
   
   2. Consider change the data type from `int` to `bigint` to store many URLs
