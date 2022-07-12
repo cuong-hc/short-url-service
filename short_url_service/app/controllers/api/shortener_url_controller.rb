@@ -12,7 +12,7 @@ class Api::ShortenerUrlController < Api::ApiController
   # @apiSuccessExample {json} Success-Response:
   # HTTP/1.1 200 OK
   # {
-  #   "short_url": "http://short.est/bYk7Q7"
+  #   "short_url": "https://fathomless-brook-34457.herokuapp.com/bYk7Q7"
   # }
   #@apiErrorExample {json} Error-Response:  
   # HTTP/1.1 422 Unprocessable Entity
@@ -33,23 +33,22 @@ class Api::ShortenerUrlController < Api::ApiController
         render json: error_format("URL is expired", "expired_url", "URL is expired"), status: 422
       else
         render json: {
-          short_url: "http://short.est/#{url_exist.key_code}"
+          short_url: "https://fathomless-brook-34457.herokuapp.com/#{url_exist.key_code}"
         }, status: 201
       end
       return
     end
 
     #Encode URL
-    key_available = KeyAvailable.first
+    key_available = KeyAvailable.order("random()").limit(1).first
     if key_available
       short_url = ShortenerUrl.new(original_url: encode_params[:original_url], 
                                    key_code: key_available.key_code, 
                                    expired_at: DateTime.current.next_year(1))
       if short_url.save
-        KeyUsed.create(key_code: key_available.key_code, number_to_convert: key_available.number_to_convert)
         key_available.destroy
         render json: {
-          short_url: "http://short.est/#{short_url.key_code}"
+          short_url: "https://fathomless-brook-34457.herokuapp.com/#{short_url.key_code}"
         }, status: 201
       else
         render json: error_format("Encode Failed", "encode_failed", short_url.errors.full_messages), status: 422

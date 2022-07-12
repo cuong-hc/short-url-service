@@ -1,6 +1,6 @@
 class ShortenerUrlService
 
-  def self.convert_number_to_short_url(number)
+  def self.base62_number_to_string(number)
     #Map to store 62 possible characters 
     characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split('')  
     shorturl = "";
@@ -12,7 +12,7 @@ class ShortenerUrlService
     return shorturl.reverse
   end
 
-  def self.convert_short_url_to_number(short_url)
+  def self.base62_string_to_number(short_url)
     number = 0;
     short_url.split('').each_with_index do |character|
       if ('a' <= character && character <= 'z') 
@@ -32,7 +32,7 @@ class ShortenerUrlService
     key_availales = []
     (from_time.to_i..to_time.to_i).to_a.each do |second|
       key_availales << {
-        key_code: ShortenerUrlService.convert_number_to_short_url(second),
+        key_code: ShortenerUrlService.base62_number_to_string(second),
         number_to_convert: second
       }
     end

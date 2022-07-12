@@ -1,25 +1,49 @@
 # README
 
-This is source code for the back-end of Short URL project. 
+Short-URL Challenge
 
-To convert long url to short url, my solution is: 
-  - Generating unique key_code beforehand and stores them in database table "key_availables". Please check function `ShortenerUrlService.generate_key_code_offline`
-  - Whenever we want to shorten a URL, we will take one of the already-generated keys and use it. We won’t have to worry about duplications or collisions.
-  - Solution to generate unique key_code: Convert the unique integer to a character string that is at most 6 characters long
+Github: https://github.com/cuong-hc/short-url-service
 
-I 've created 3 tables are: 
-  - shortener_urls: To save the original_url, key_code is used and expiration time
-  - key_availables: generates random unique strings beforehand
-  - key_useds: mark the keys are used for create short url
+Short-URL API is hosted on: https://fathomless-brook-34457.herokuapp.com
 
-My API: 
-  - POST api/encode: Encode the original url
-    params: original_url
-  - POST api/decode: Decode the original url
-    params: key_code
+To resolve this challenge, in my opinion, we need to resolve the below problems:
+  1. Generate the unique key_code to map with a long URL
+  2. How to get the key_code to map with a long URL fast and avoid duplications or collisions
 
-For improvement, we need to define the mechanic or schedule to insert new key_code in table "keys_available" when it have less records
+My solutions: 
+  1. To get a unique key code, I 've converted Unix timestamp by base62 conversion. Please check function  `ShortenerUrlService.base62_number_to_string` 
+  2. Generating unique key_code beforehand and stores them in database table "key_availables". I 've generated about 86400 `key_code` by function `ShortenerUrlService.generate_key_code_offline(DateTime.current, DateTime.current + 1)`.
+  3. Whenever we want to shorten a URL, we will take one of the already generated keys in table `key_availables` and use it. We won’t have to worry about duplications or collisions.
 
+Database: PostgreSQL
+  1. Table `shortener_urls`: store the original_url and key_code
+  - `id` 
+  - `original_url` 
+  - `key_code`: key_code in table `key_availables`
+  - `expired_at`
+
+  2. `key_availables`: generates unique key_code from Unix Timestamp
+  - `id` 
+  - `key_code` 
+  - `number_to_convert`: Unix Timestamp
+
+My Assigments:
+  1. My project is hosted on Heroku: https://fathomless-brook-34457.herokuapp.com
+  2. Github
+
+  1. POST api/encode: Encode the original url
+  -  curl -d '{"original_url": "https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/encode
+  - Response: {"short_url":"http://short.est/bYk4ga"}
+
+  2. POST api/decode: Decode the code to original url
+  - curl -d '{"key_code": "bYk4ga"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/decode  
+  - Response: {"original_url":"https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}
+
+To Do: 
+  1. Need to have a strategy to fill the new key_code in table "keys_available" when it 's empty. Such as: Cronjob to generate a new_key with a new time range
+  
+  2. Consider change the data type from `int` to `bigint` to store many URLs
+  
 ## Run project by Docker
 
 - Install docker: https://docs.docker.com/engine/install/
@@ -29,18 +53,18 @@ For improvement, we need to define the mechanic or schedule to insert new key_co
 - Open browser and go to: http://localhost:3000
 
 ## Potential attack vectors on the application
-
--  DoS Attacks
--  Man-In-The-Middle-Attack
+1. Injection Attacks
+2. DoS Attacks
+ - Throtlle and rate limit the API
+3. Parameter Tampering  
 
 ## Scale up and solve the collision problem. 
- - Decouple service "Generate key_codes" as a standalone service -> using NoSQL to store the keys
- - Database Partioning and Replication: to store information about billions of URLs
- - Caching: Cache URLs that are frequently accessed and cache a part of keys_available in memory for avoiding the hitting of the database.
- - Apply load balancer and auto-scaling for Application Servers, Database Servers, Cache servers
- - DB Cleanup 
-  - Set default expiration time for each link
-  - Whenerver user access the expired link -> return the error
+ 1. Decouple function "Generate key_code offline" to a standalone service -> using NoSQL to store the keys
+ 2. Database Partioning and Replication: Tuning performance for query to databases.
+ 3. Caching: Cache URLs that are frequently accessed and cache a part of `key_code` in table `keys_available` in memory for avoiding the hitting of the database.
+ 4. Apply load balancer and auto-scaling for Application Servers, Database Servers, Cache servers
+ 5. Stragery for DB Cleanup 
+  - Set default expiration time for each link. Whenever the user access the expired link -> return the error
   - A seperate service to remove the expired link from database and cache. 
-  - After removing an expired link, we can put the key_code back into "keys_available" to be reused.
+  - After removing an expired link, we can put the key_code back into table `keys_available` to be reused.
  
