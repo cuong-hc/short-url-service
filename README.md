@@ -7,12 +7,16 @@ Github: https://github.com/cuong-hc/short-url-service
 Short-URL API is hosted on: https://fathomless-brook-34457.herokuapp.com
 
   1.  POST api/encode: Encode the original url
-      - Request: curl -d '{"original_url": "https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/encode
-      - Response: {"short_url":"http://short.est/bYk4ga"}
+      - Request: 
+        - curl -d '{"original_url": "https://github.com/rposborne/wkhtmltopdf-heroku/issues/111212323"}' -H "Content-Type: application/json" -X POST https://fathomless-brook-34457.herokuapp.com/api/encode
+      - Response: 
+        - {"short_url":"https://fathomless-brook-34457.herokuapp.com/bYk4ga"}
 
   2. POST api/decode: Decode the code to original url
-      - Request curl -d '{"key_code": "bYk4ga"}' -H "Content-Type: application/json" -X POST https://pure-ocean-91781.herokuapp.com/api/decode  
-      - Response: {"original_url":"https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}
+      - Request 
+        - curl -d '{"key_code": "bYk4ga"}' -H "Content-Type: application/json" -X POST https://fathomless-brook-34457.herokuapp.com/api/decode  
+      - Response: 
+        - {"original_url":"https://github.com/rposborne/wkhtmltopdf-heroku/issues/111223"}
 
 To resolve this challenge, in my opinion, we need to resolve the below problems:
   1. Generate the unique key_code to map with a long URL
