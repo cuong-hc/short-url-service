@@ -2,24 +2,18 @@ class ShortenerUrlService
 
   def self.convert_number_to_short_url(number)
     #Map to store 62 possible characters 
-    characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split('')
-  
-    shorturl = "";  
-    
+    characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split('')  
+    shorturl = "";
     # Convert given integer id to a base 62 number 
     while number > 0
-      #use above map to store actual character in short url 
       shorturl += characters[number % 62];
       number = number / 62;
     end
-  
-    #Reverse shortURL to complete base conversion 
     return shorturl.reverse
   end
 
   def self.convert_short_url_to_number(short_url)
     number = 0;
-    # A simple base conversion logic 
     short_url.split('').each_with_index do |character|
       if ('a' <= character && character <= 'z') 
         number = number * 62 + character.ord - 'a'.ord

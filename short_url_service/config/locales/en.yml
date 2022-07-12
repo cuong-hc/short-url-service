@@ -30,7 +30,6 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
   error_messages:
     "ActionController::ParameterMissing":
       http_code: 422
@@ -39,12 +38,4 @@ en:
     "ActionController::InvalidAuthenticityToken":
       http_code: 401
       app_code: "invalid_authencity"
-      title: "Invalid authencity"
-    "JWT::ExpiredSignature":
-      http_code: 401
-      app_code: "token_expired"
-      title: "Access Token has been expired"
-    "JWT::VerificationError":
-      http_code: 401
-      app_code: "token_verification_failed"
-      title: "Access Token has been verified failed"
+      title: "Invalid authencity"    
